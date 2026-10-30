@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import ProfileCard from './ProfileCard'
-const members = [
+const initialMembers = [
   {
     id: 1,
     name: '허윤호',
@@ -69,6 +69,7 @@ const members = [
 function TeamPage() {
   const [filter, setFilter] = useState('all')
   const [search, setSearch] = useState('')
+  const [members, setMembers] = useState(initialMembers)
   const filteredMembers = members.filter((member) => {
     const matchesSearch =
       member.name.includes(search) || member.job.includes(search)
@@ -78,6 +79,19 @@ function TeamPage() {
     else matchesFilter = !member.isJob
     return matchesSearch && matchesFilter
   })
+
+  function handleDelete(id) {
+    setMembers(members.filter((member) => member.id !== id))
+  }
+
+  function handleToggle(id) {
+    setMembers(
+      members.map((member) =>
+        member.id === id ? { ...member, isJob: !member.isJob } : member,
+      ),
+    )
+  }
+
   return (
     <div className="page">
       <div className="page-header">
@@ -121,7 +135,7 @@ function TeamPage() {
         </div>
       </div>
 
-      {filteredMembers.length >= 0 ? (
+      {filteredMembers.length > 0 ? (
         <div className="card-list">
           {filteredMembers.map((member) => (
             <ProfileCard
@@ -131,6 +145,8 @@ function TeamPage() {
               birthYear={member.birthYear}
               projectCount={member.projectCount}
               isJob={member.isJob}
+              onDelete={() => handleDelete(member.id)}
+              onToggle={() => handleToggle(member.id)}
             />
           ))}
         </div>
