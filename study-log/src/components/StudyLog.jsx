@@ -1,13 +1,41 @@
+import { useState } from "react";
+
+const initialLogs = [
+  {
+    id: 1,
+    title: "불변성 패턴 복습",
+    subject: "React",
+    minutes: 40,
+    isDone: false,
+  },
+  {
+    id: 2,
+    title: "배열 메서드 map, filter",
+    subject: "JS",
+    minutes: 55,
+    isDone: true,
+  },
+  {
+    id: 3,
+    title: "프로세스와 스레드 차이",
+    subject: "CS",
+    minutes: 30,
+    isDone: false,
+  },
+];
+
 function StudyLog() {
+  const [logs, setLogs] = useState(initialLogs);
+  const totalMinutes = logs.reduce((acc, cur) => acc + cur.minutes, 0);
+
   return (
     <div className="study-log">
       <header className="study-log-header">
         <h1 className="study-log-title">스터디 로그</h1>
         <p className="study-log-total">
-          총 <strong className="study-log-total-value">95</strong>분
+          총 <strong className="study-log-total-value">{totalMinutes}</strong>분
         </p>
       </header>
-
       <form className="study-log-form">
         <label className="study-log-field">
           <span className="study-log-label">내용</span>
@@ -44,50 +72,41 @@ function StudyLog() {
           추가
         </button>
       </form>
-
       <ul className="study-log-list">
-        <li className="study-log-item">
-          <input className="study-log-check" type="checkbox" />
-          <div className="study-log-item-body">
-            <p className="study-log-item-title">불변성 패턴 복습</p>
-            <div className="study-log-item-meta">
-              <span className="study-log-subject">React</span>
-              <span className="study-log-minutes">40분</span>
+        {logs.map((log) => (
+          <li
+            key={log.id}
+            className={`study-log-item ${log.isDone ? "is-done" : ""}`}
+          >
+            <input
+              className="study-log-check"
+              type="checkbox"
+              readOnly
+              checked={log.isDone}
+            />
+            <div className="study-log-item-body">
+              <p className="study-log-item-title">{log.title}</p>
+              <div className="study-log-item-meta">
+                <span className="study-log-subject">{log.subject}</span>
+                <span className="study-log-minutes">{log.minutes}분</span>
+              </div>
             </div>
-          </div>
-          <div className="study-log-item-actions">
-            <button className="study-log-edit-button" type="button">
-              편집
-            </button>
-            <button className="study-log-delete-button" type="button">
-              삭제
-            </button>
-          </div>
-        </li>
-
-        <li className="study-log-item is-done">
-          <input className="study-log-check" type="checkbox" defaultChecked />
-          <div className="study-log-item-body">
-            <p className="study-log-item-title">배열 메서드 map, filter</p>
-            <div className="study-log-item-meta">
-              <span className="study-log-subject">JS</span>
-              <span className="study-log-minutes">55분</span>
+            <div className="study-log-item-actions">
+              <button className="study-log-edit-button" type="button">
+                편집
+              </button>
+              <button className="study-log-delete-button" type="button">
+                삭제
+              </button>
             </div>
-          </div>
-          <div className="study-log-item-actions">
-            <button className="study-log-edit-button" type="button">
-              편집
-            </button>
-            <button className="study-log-delete-button" type="button">
-              삭제
-            </button>
-          </div>
-        </li>
+          </li>
+        ))}
       </ul>
-
-      <p className="study-log-empty">
-        아직 기록이 없어요. 오늘 공부한 내용을 추가해 보세요.
-      </p>
+      {logs.length === 0 && (
+        <p className="study-log-empty">
+          아직 기록이 없어요. 오늘 공부한 내용을 추가해 보세요.
+        </p>
+      )}
     </div>
   );
 }
