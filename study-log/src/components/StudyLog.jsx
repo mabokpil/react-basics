@@ -23,10 +23,25 @@ const initialLogs = [
     isDone: false,
   },
 ];
-
+const initialForm = { title: "", subject: "React", minutes: "" };
 function StudyLog() {
   const [logs, setLogs] = useState(initialLogs);
+  const [form, setForm] = useState(initialForm);
   const totalMinutes = logs.reduce((acc, cur) => acc + cur.minutes, 0);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (form.title.trim() === "") return;
+    setLogs([
+      ...logs,
+      { id: Date.now(), ...form, minutes: Number(form.minutes), isDone: false },
+    ]);
+    setForm(initialForm);
+  };
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   return (
     <div className="study-log">
@@ -36,20 +51,27 @@ function StudyLog() {
           총 <strong className="study-log-total-value">{totalMinutes}</strong>분
         </p>
       </header>
-      <form className="study-log-form">
+      <form className="study-log-form" onSubmit={handleSubmit}>
         <label className="study-log-field">
           <span className="study-log-label">내용</span>
           <input
             className="study-log-input"
             type="text"
             name="title"
+            value={form.title}
             placeholder="오늘 공부한 내용"
+            onChange={handleChange}
           />
         </label>
 
         <label className="study-log-field">
           <span className="study-log-label">과목</span>
-          <select className="study-log-select" name="subject">
+          <select
+            className="study-log-select"
+            name="subject"
+            value={form.subject}
+            onChange={handleChange}
+          >
             <option value="React">React</option>
             <option value="JS">JS</option>
             <option value="CS">CS</option>
@@ -65,6 +87,8 @@ function StudyLog() {
             name="minutes"
             min="0"
             placeholder="30"
+            value={form.minutes}
+            onChange={handleChange}
           />
         </label>
 
